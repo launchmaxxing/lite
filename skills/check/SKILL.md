@@ -54,7 +54,7 @@ What each rule means, so you can explain a hit in one clause:
 
 ### 3. Get the critic's verdict
 
-Send the draft to the `cringe-critic` agent that ships with this plugin (`lm-lite:cringe-critic`). Give it the draft path, what the draft is for, and the slop-lint output, and ask for its usual verdict block. It reads as a senior developer scrolling X with a thumb on mute, and it scores independently of you: the author of a fix doesn't get to grade it.
+Send the draft to the `cringe-critic` agent that ships with this plugin (`lm-lite:cringe-critic`), in the foreground: wait for its verdict in this turn and never end your reply while it runs, because this skill's pre-approval for slop-lint ends with the turn. Give it the draft path, what the draft is for, and the slop-lint output, and ask for its usual verdict block. It reads as a senior developer scrolling X with a thumb on mute, and it scores independently of you: the author of a fix doesn't get to grade it.
 
 If you can't start a subagent here, read `${CLAUDE_PLUGIN_ROOT}/agents/cringe-critic.md` and apply it yourself, and say in the report that the critic ran inline.
 
