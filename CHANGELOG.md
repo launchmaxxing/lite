@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- `slop-lint` now lints post text inside fences. It skips only fences tagged with a code language (```` ```sh ````, ```` ```json ````...); untagged, `text` and `md` fences are linted, and `--count` counts only those. Before, every fenced block was skipped, so a post kept in a fence was never checked.
+
 ## 0.1.0 (unreleased)
 
 First version.

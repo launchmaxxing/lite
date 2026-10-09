@@ -19,7 +19,8 @@ Checks:
   emoji-wall      3 or more emoji on one line, or more than 5 in one file
   reused          a line sharing 6 words in a row with an --against file (copied examples or hooks)
 
-Fenced code blocks are skipped.
+Fenced blocks tagged with a code language (\`\`\`sh, \`\`\`bash, \`\`\`json, \`\`\`js...) are skipped.
+Untagged fences and \`\`\`text, \`\`\`md or \`\`\`markdown fences hold post text, so they are linted.
 
 Options:
   --max-words N     Sentence word limit (default 30)
@@ -28,9 +29,9 @@ Options:
                     searched for .md, .json and .txt; for .json only string values count.
                     Case and punctuation are ignored. Repeatable
   --json            Print hits as JSON
-  --count           Don't lint. Print the length of every fenced code block the way X
-                    counts it (each link is 23, each emoji is 2), flagging blocks over 280.
-                    A file with no fenced blocks is counted as one post
+  --count           Don't lint. Print the length of every post fence (untagged, text or md)
+                    the way X counts it (each link is 23, each emoji is 2), flagging posts
+                    over 280. A file with no post fences is counted as one post
   -h, --help        Show this help
 
 Exit codes: 0 clean, 1 hits found, 2 usage error. --count always exits 0.
@@ -64,6 +65,36 @@ function usage(msg) {
   process.exit(2);
 }
 
+// Drafts keep each post in its own fence, so fences can't simply be skipped: that would skip the
+// post text. A fence is code only when its info string names a language; untagged, text and md
+// fences are posts. Each line gets a kind: "marker" (a fence line), "code", "post" or "text".
+const PROSE_TAGS = new Set(["text", "txt", "plain", "plaintext", "md", "markdown", "post", "tweet"]);
+
+function classify(lines) {
+  const kinds = [];
+  let open = null; // { ch, len, code } while inside a fence
+  for (const line of lines) {
+    if (!open) {
+      const m = /^\s*(`{3,}|~{3,})\s*([^\s`]*)/.exec(line);
+      if (!m) {
+        kinds.push("text");
+        continue;
+      }
+      const tag = m[2].replace(/^\{\.?|\}$/g, "").toLowerCase();
+      open = { ch: m[1][0], len: m[1].length, code: tag !== "" && !PROSE_TAGS.has(tag) };
+      kinds.push("marker");
+      continue;
+    }
+    // A closing fence uses the same character, at least as many of them, and nothing after.
+    const close = /^\s*(`{3,}|~{3,})\s*$/.exec(line);
+    if (close && close[1][0] === open.ch && close[1].length >= open.len) {
+      open = null;
+      kinds.push("marker");
+    } else kinds.push(open.code ? "code" : "post");
+  }
+  return kinds;
+}
+
 // X counts every link as 23 characters and most emoji as 2, so a plain length check lies.
 if (countOnly) {
   for (const file of files) {
@@ -73,28 +104,28 @@ if (countOnly) {
     } catch (e) {
       usage(`cannot read ${file}: ${e.message}`);
     }
-    let start = -1, block = [], fenced = 0;
+    const kinds = classify(lines);
     const report = (where, text) => {
       text = text.replace(/https?:\/\/\S+/g, "x".repeat(23));
       const n = [...text].length + (text.match(/\p{Extended_Pictographic}/gu) || []).length;
       console.log(`${where}  ${n} chars${n > 280 ? "  OVER 280 (fine only with X Premium)" : ""}`);
     };
-    lines.forEach((line, idx) => {
-      if (!/^\s*(```|~~~)/.test(line)) {
-        if (start >= 0) block.push(line);
-        return;
-      }
-      if (start < 0) {
-        start = idx + 1;
-        block = [];
-        return;
-      }
+    let start = -1, block = [], posts = 0;
+    const flush = () => {
+      if (start < 0) return;
       report(`${file}:${start + 1}`, block.join("\n"));
-      fenced++;
+      posts++;
       start = -1;
+    };
+    lines.forEach((line, idx) => {
+      if (kinds[idx] === "post") {
+        if (start < 0) [start, block] = [idx, []];
+        block.push(line);
+      } else if (kinds[idx] === "marker") flush();
     });
-    // A plain post file with no fences is one post: count all of it.
-    if (!fenced) report(file, lines.join("\n").trim());
+    flush();
+    // A plain post file with no post fences is one post: count all of it.
+    if (!posts) report(file, lines.join("\n").trim());
   }
   process.exit(0);
 }
@@ -185,16 +216,15 @@ for (const file of files) {
   } catch (e) {
     usage(`cannot read ${file}: ${e.message}`);
   }
-  let inFence = false, bangs = 0, emojiTotal = 0;
+  let bangs = 0, emojiTotal = 0;
   const add = (line, col, rule, detail) => hits.push({ file, line, col, rule, detail });
+  const lines = text.split("\n");
+  const kinds = classify(lines);
 
-  text.split("\n").forEach((raw, idx) => {
+  lines.forEach((raw, idx) => {
     const n = idx + 1;
-    if (/^\s*(```|~~~)/.test(raw)) {
-      inFence = !inFence;
-      return;
-    }
-    if (inFence) return;
+    // Fence lines are syntax; code fences hold commands and data, not text anyone reads as a post.
+    if (kinds[idx] === "marker" || kinds[idx] === "code") return;
     // Link targets stop at "]" and allow one level of parentheses, so the match is linear even on
     // a long line of unclosed "](" (the old [^)]* rescanned to the end of the line from each one).
     const line = raw.replace(/`[^`]*`/g, (m) => " ".repeat(m.length)).replace(/\]\((?:[^()\]]|\([^()\]]*\))*\)/g, (m) => "]" + " ".repeat(m.length - 1));

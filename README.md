@@ -31,7 +31,7 @@ The after still says REVISE. The critic wants the closing question gone and won'
 
 What slop-lint printed for the before, unedited:
 
-```
+```console
 examples/slop-post/before.md  exclamations   4 exclamation marks, keep it to 2 or fewer
 examples/slop-post/before.md:1:1  phrase         "🚀" (🚀)
 examples/slop-post/before.md:1:4  phrase         "Excited to announce" (excited to announce)
@@ -98,7 +98,7 @@ Tell it when you posted and it adds markers. It writes a 1200x675 PNG and SVG to
 
 **Without Claude.** Both are plain Node scripts with no dependencies, the same scripts the paid kit uses:
 
-```
+```sh
 node scripts/slop-lint.mjs my-post.md
 node scripts/star-curve.mjs your-name/your-repo --since 2026-08-29 --card --png
 ```
