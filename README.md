@@ -109,6 +109,7 @@ node scripts/star-curve.mjs your-name/your-repo --since 2026-08-29 --card --png
 
 - [examples/slop-post](examples/slop-post/check-output.md): the before and after above, both runs, with the critic's full reports.
 - [examples/readme](examples/readme/check-output.md): lite run on this README.
+- [evals/evals.json](evals/evals.json): test cases for both commands. `node evals/check.mjs --help` scores a run against them.
 
 ## What lite doesn't do
 
