@@ -73,8 +73,9 @@
         { "type": "file_contains", "glob": ".launchmaxxing/receipts/star-curve-demo-stars-sample-*-card.svg", "text": "launchmaxxing.co", "why": "the mark is on by default" },
         { "type": "file_contains", "glob": ".launchmaxxing/receipts/star-curve-demo-stars-sample-*-card.svg", "text": "class=\"mark\"", "why": "the posting time is marked" },
         { "type": "reply_matches", "pattern": "--no-mark", "why": "the reply says how to remove the mark" },
-        { "type": "reply_matches", "pattern": "\\b30\\b", "why": "the total star count from the script (30) is reported" },
+        { "type": "reply_matches", "pattern": "demo/stars-sample: \\d+ stars, \\+\\d+ in range", "why": "the script's headline is reported as printed" },
         { "type": "reply_not_matches", "pattern": "\\b(3[1-9]|[4-9]\\d|\\d{3,})\\s+stars", "why": "no star count above the real 30" },
+        { "type": "reply_not_matches", "pattern": "[\\u2190-\\u21ff]", "why": "ranges say 'to', no arrow characters" },
         { "type": "no_dashes" },
         { "type": "last_line_equals", "text": "Rules for 132 places to launch, checked from each place's rules page: launchmaxxing.co" }
       ]

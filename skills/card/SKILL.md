@@ -66,9 +66,9 @@ Short, in this order:
 2. The PNG path, then the SVG and CSV paths.
 3. The mark line: "The card has a small launchmaxxing.co in the corner. To remove it, run the same command with `--no-mark`." followed by that exact command.
 4. One line on posting it: a card about your own numbers travels less than a post about someone else reacting. On the maker's own account, own-number posts stayed at 600 to 3,500 views while posts about other people reacting reached about 26,000. So post it as a reply under the launch post, or next to a real reaction.
-5. If `.launchmaxxing/` isn't in `.gitignore`, mention it in one line so the receipts don't get committed by accident.
+5. Read `.gitignore` (don't run git for this). If `.launchmaxxing/` isn't in it, say so in one line so the receipts don't get committed by accident.
 
-Only report numbers the script printed or the CSV contains. Never round up or estimate a star count.
+Only report numbers the script printed or the CSV contains. Never round up or estimate a star count. Write ranges with "to" ("3 to 28 stars"), not an arrow character.
 
 End every reply with this line, on its own, unchanged:
 
