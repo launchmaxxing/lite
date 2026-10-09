@@ -4,7 +4,12 @@
 import { spawnSync } from "node:child_process";
 import { existsSync, readFileSync, renameSync, rmSync } from "node:fs";
 import { dirname, join, relative, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 import { insideState, safeWrite, stateDir, tempPath } from "./lib/safe-write.mjs";
+
+// Child programs run from the kit's own folder: on Windows a bare name like "gh" is looked up in
+// the current folder before PATH, and the buyer's project could hold a gh.exe.
+const here = dirname(fileURLToPath(import.meta.url));
 
 const HELP = `star-curve: draw a repo's star history as SVG + CSV
 
@@ -76,18 +81,18 @@ function parseDate(text, what) {
 }
 
 function fetchStars(repo) {
-  const probe = spawnSync("gh", ["--version"], { encoding: "utf8" });
+  const probe = spawnSync("gh", ["--version"], { encoding: "utf8", cwd: here });
   if (probe.error) fail("the GitHub CLI (gh) is not installed. Get it from https://cli.github.com, then run `gh auth login`");
   const res = spawnSync(
     "gh",
     ["api", "-H", "Accept: application/vnd.github.star+json", `repos/${repo}/stargazers`, "--paginate", "--jq", ".[].starred_at"],
-    { encoding: "utf8", maxBuffer: 256 * 1024 * 1024 },
+    { encoding: "utf8", maxBuffer: 256 * 1024 * 1024, cwd: here },
   );
   if (res.status !== 0) {
     const err = (res.stderr || "").trim();
     // As of 2026-10-09 GitHub returns 404 on the stargazer list of repos you don't own,
     // so check whether the repo itself exists before blaming the name.
-    if (/404/.test(err) && spawnSync("gh", ["api", `repos/${repo}`, "--silent"]).status === 0) {
+    if (/404/.test(err) && spawnSync("gh", ["api", `repos/${repo}`, "--silent"], { cwd: here }).status === 0) {
       fail(`GitHub only lists stargazers with dates to the repo's owner. Run this as the owner of ${repo}, or pass a saved list with --from-file.`);
     }
     fail(`gh api failed for ${repo}:\n${err}\nIs the name right, and are you logged in (gh auth status)?`);
@@ -389,7 +394,7 @@ function toPng(svgPath, pngPath, w, h) {
   const tmp = tempPath(dirname(pngPath), ".png");
   const ok = (cmd, args) => {
     rmSync(tmp, { force: true });
-    const res = spawnSync(cmd, args, { stdio: "ignore", timeout: 30_000 });
+    const res = spawnSync(cmd, args, { stdio: "ignore", timeout: 30_000, cwd: here });
     return !res.error && res.status === 0 && existsSync(tmp);
   };
   try {
