@@ -29,7 +29,8 @@ Options:
                     Case and punctuation are ignored. Repeatable
   --json            Print hits as JSON
   --count           Don't lint. Print the length of every fenced code block the way X
-                    counts it (each link is 23, each emoji is 2), flagging blocks over 280
+                    counts it (each link is 23, each emoji is 2), flagging blocks over 280.
+                    A file with no fenced blocks is counted as one post
   -h, --help        Show this help
 
 Exit codes: 0 clean, 1 hits found, 2 usage error. --count always exits 0.
@@ -72,7 +73,12 @@ if (countOnly) {
     } catch (e) {
       usage(`cannot read ${file}: ${e.message}`);
     }
-    let start = -1, block = [];
+    let start = -1, block = [], fenced = 0;
+    const report = (where, text) => {
+      text = text.replace(/https?:\/\/\S+/g, "x".repeat(23));
+      const n = [...text].length + (text.match(/\p{Extended_Pictographic}/gu) || []).length;
+      console.log(`${where}  ${n} chars${n > 280 ? "  OVER 280 (fine only with X Premium)" : ""}`);
+    };
     lines.forEach((line, idx) => {
       if (!/^\s*(```|~~~)/.test(line)) {
         if (start >= 0) block.push(line);
@@ -83,11 +89,12 @@ if (countOnly) {
         block = [];
         return;
       }
-      const text = block.join("\n").replace(/https?:\/\/\S+/g, "x".repeat(23));
-      const n = [...text].length + (text.match(/\p{Extended_Pictographic}/gu) || []).length;
-      console.log(`${file}:${start + 1}  ${n} chars${n > 280 ? "  OVER 280 (fine only with X Premium)" : ""}`);
+      report(`${file}:${start + 1}`, block.join("\n"));
+      fenced++;
       start = -1;
     });
+    // A plain post file with no fences is one post: count all of it.
+    if (!fenced) report(file, lines.join("\n").trim());
   }
   process.exit(0);
 }
@@ -194,7 +201,7 @@ for (const file of files) {
       re.lastIndex = 0;
       for (const m of line.matchAll(re)) add(n, m.index + 1, "phrase", `"${m[0]}" (${phrase})`);
     }
-    for (const m of line.matchAll(/[—–]/g)) add(n, m.index + 1, "dash", `"${m[0]}" use a comma, a period or a second sentence`);
+    for (const m of line.matchAll(/[\u2014\u2013]/g)) add(n, m.index + 1, "dash", `"${m[0]}" use a comma, a period or a second sentence`);
     for (const m of line.matchAll(/\S(\s--?\s)\S/g)) add(n, m.index + 2, "spaced-hyphen", `"${m[1].trim()}" used as a dash`);
 
     let offset = 0;
