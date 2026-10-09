@@ -335,7 +335,8 @@ if (opts.help) {
   process.stdout.write(HELP);
   process.exit(0);
 }
-if (!opts.repo || !/^[\w.-]+\/[\w.-]+$/.test(opts.repo)) fail("give the repo as owner/repo. Try --help");
+// A part made only of dots ("..") would turn repos/<owner>/<repo> into a different API path.
+if (!opts.repo || !/^[\w.-]+\/[\w.-]+$/.test(opts.repo) || opts.repo.split("/").some((p) => /^\.+$/.test(p))) fail("give the repo as owner/repo. Try --help");
 if (!["day", "hour"].includes(opts.bucket)) fail("--bucket must be day or hour");
 if (!["auto", "light", "dark"].includes(opts.theme)) fail("--theme must be auto, light or dark");
 if (opts.stdout && !["svg", "csv"].includes(opts.stdout)) fail("--stdout must be svg or csv");
