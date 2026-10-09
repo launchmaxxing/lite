@@ -8,7 +8,7 @@ lite is a free Claude Code plugin with two commands. `/lm-lite:check` runs a rea
 
 | 8 to 1,051 stars in 8 days | 195,162 vs 54,783 views | 47,891 views, 2 to 290 stars |
 |---|---|---|
-| breakscale, Aug 29 to Sep 5, 2026 (UTC). The card above is `/lm-lite:card` on its stargazer list. | breakscale on X: a friend's own video of the app vs my launch post. Read 2026-10-09. | gyotaku's launch post on X. Stars over the next 4 days. |
+| breakscale, Aug 29 to Sep 5, 2026 (UTC). The card above is `/lm-lite:card` on its stargazer list. | breakscale on X, as of 2026-10-09: a friend's video of the app vs my own launch post. Most stars came after the video. | gyotaku's launch post on X. Stars over the next 4 days. |
 
 Those are my launches (I'm Yash Bavadiya). lite is the checking part of how I write launch posts now.
 
@@ -86,7 +86,7 @@ You don't have to type the command. Asking "is this tweet cringe?", "check my Sh
 
 Two checks run, and they catch different things:
 - **slop-lint**, a script. It flags the phrases from [data/slop-phrases.txt](data/slop-phrases.txt), em and en dashes, hyphens used as dashes, sentences over 30 words, more than 2 exclamation marks and emoji walls. Same input, same output, every time.
-- **cringe-critic**, a subagent ([agents/cringe-critic.md](agents/cringe-critic.md)). It reads like a senior developer scrolling X with a thumb on mute. It catches what a word list can't: vague claims, engagement bait, talking about yourself first, a colon before a reveal.
+- **cringe-critic**, a subagent ([agents/cringe-critic.md](agents/cringe-critic.md)). It reads drafts as a senior dev scrolling X with a thumb on mute. It catches what a word list can't: vague claims, engagement bait, talking about yourself first, a colon before a reveal.
 
 **Make a star card.**
 
@@ -94,7 +94,7 @@ Two checks run, and they catch different things:
 /lm-lite:card your-name/your-repo
 ```
 
-Tell it when you posted and it adds markers. It writes a 1200x675 PNG and SVG to `.launchmaxxing/receipts/`. The card has a small "launchmaxxing.co" in the corner. To remove it, add `--no-mark`; nothing else changes. GitHub only shows star dates to a repo's owner, so run it on your own repo.
+Tell it when you posted and it adds markers. It writes a 1200x675 PNG and SVG to `.launchmaxxing/receipts/`. The card has a small "launchmaxxing.co" in the corner. To remove it, add `--no-mark`; nothing else changes. GitHub now only shows star dates to a repo's owner (other repos return 404 as of 2026-10-09). So run it on your own repo, or pass a saved list of star times with `--from-file`.
 
 **Without Claude.** Both are plain Node scripts with no dependencies, the same scripts the paid kit uses:
 

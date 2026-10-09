@@ -62,6 +62,8 @@ If you can't start a subagent here, read `${CLAUDE_PLUGIN_ROOT}/agents/cringe-cr
 
 One entry per line that needs work, in line order. A line flagged by both slop-lint and the critic is one entry that names both.
 
+The critic only sees the draft. If it calls a fact untrue, look for it in the author's own files (the repo, its scripts, its docs) before passing the flag on. If they back the claim, say so and keep it.
+
 Every rewrite follows these, because a fix that sounds like someone else is just a different kind of slop:
 - Same casing, slang, rhythm and punctuation habits as the author. Lowercase stays lowercase. Never more formal than the original.
 - Every fact and number stays exactly as written. Nothing new gets added: no numbers, users, features or quotes. If a line needs a number the draft doesn't have, write `[needs a real number: what to measure]`.
