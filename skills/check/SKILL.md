@@ -12,7 +12,7 @@ description: >-
   announcement", "make this less salesy" or "would you click this", even if
   they never say the word launch.
 argument-hint: "[path to the draft, or paste the text]"
-allowed-tools: Read, Write, Glob, Bash(node ${CLAUDE_PLUGIN_ROOT}/scripts/slop-lint.mjs *)
+allowed-tools: Read, Edit(./.launchmaxxing-lite/**), Glob, Bash(node ${CLAUDE_PLUGIN_ROOT}/scripts/slop-lint.mjs *)
 ---
 
 # /lm-lite:check
