@@ -2,8 +2,9 @@
 // Star history for a GitHub repo as an SVG chart and a CSV. Zero dependencies, Node 18+.
 
 import { spawnSync } from "node:child_process";
-import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
-import { join, relative, resolve, isAbsolute } from "node:path";
+import { existsSync, readFileSync, renameSync, rmSync } from "node:fs";
+import { dirname, join, relative, resolve } from "node:path";
+import { insideState, safeWrite, stateDir, tempPath } from "./lib/safe-write.mjs";
 
 const HELP = `star-curve: draw a repo's star history as SVG + CSV
 
@@ -340,10 +341,8 @@ if (!["auto", "light", "dark"].includes(opts.theme)) fail("--theme must be auto,
 if (opts.stdout && !["svg", "csv"].includes(opts.stdout)) fail("--stdout must be svg or csv");
 for (const k of ["width", "height"]) if (!(Number(opts[k]) >= 200)) fail(`--${k} must be a number of at least 200`);
 
-const root = resolve(".launchmaxxing");
-const out = resolve(opts.out ?? join(".launchmaxxing", "receipts"));
-const relOut = relative(root, out);
-if (!opts.stdout && (relOut.startsWith("..") || isAbsolute(relOut))) fail("--out must be inside .launchmaxxing/ in this folder");
+const outArg = opts.out ?? join(".launchmaxxing", "receipts");
+if (!opts.stdout) insideState(outArg, fail);
 
 let times;
 if (opts["from-file"]) {
@@ -365,11 +364,11 @@ const csv = renderCsv(series);
 if (opts.stdout) {
   process.stdout.write(opts.stdout === "svg" ? svg : csv);
 } else {
-  mkdirSync(out, { recursive: true });
+  const out = stateDir(outArg, fail);
   const base = `star-curve-${opts.repo.replace("/", "-")}-${new Date().toISOString().slice(0, 10)}`;
   const svgName = opts.card ? `${base}-card.svg` : `${base}.svg`;
-  writeFileSync(join(out, svgName), svg);
-  writeFileSync(join(out, `${base}.csv`), csv);
+  safeWrite(join(out, svgName), svg);
+  safeWrite(join(out, `${base}.csv`), csv);
   const last = series.rows[series.rows.length - 1].total;
   console.log(`${opts.repo}: ${fmt.format(last)} stars, +${fmt.format(last - series.before)} in range`);
   console.log(`wrote ${relative(process.cwd(), join(out, svgName))} and ${relative(process.cwd(), join(out, base))}.csv`);
@@ -383,11 +382,26 @@ if (opts.stdout) {
 }
 
 // Tries converters the buyer may already have, so the kit stays dependency-free.
+// They write to a fresh temp name that is then renamed over pngPath, so a symlink planted at
+// pngPath gets replaced instead of written through.
 function toPng(svgPath, pngPath, w, h) {
+  const tmp = tempPath(dirname(pngPath), ".png");
   const ok = (cmd, args) => {
+    rmSync(tmp, { force: true });
     const res = spawnSync(cmd, args, { stdio: "ignore", timeout: 30_000 });
-    return !res.error && res.status === 0 && existsSync(pngPath);
+    return !res.error && res.status === 0 && existsSync(tmp);
   };
+  try {
+    const used = firstConverter(ok, svgPath, tmp, w, h);
+    if (used) renameSync(tmp, pngPath);
+    else rmSync(pngPath, { force: true });
+    return used;
+  } finally {
+    rmSync(tmp, { force: true });
+  }
+}
+
+function firstConverter(ok, svgPath, pngPath, w, h) {
   if (ok("rsvg-convert", ["-z", "2", svgPath, "-o", pngPath])) return "rsvg-convert";
   if (ok("magick", ["-density", "192", "-background", "none", svgPath, pngPath])) return "ImageMagick";
   const browsers = [
@@ -400,7 +414,6 @@ function toPng(svgPath, pngPath, w, h) {
   ];
   const url = `file://${resolve(svgPath).replace(/\\/g, "/").replace(/^([A-Za-z]):/, "/$1:")}`;
   for (const b of browsers) {
-    rmSync(pngPath, { force: true });
     if (ok(b, ["--headless=new", "--disable-gpu", "--hide-scrollbars", "--force-device-scale-factor=2", `--window-size=${w},${h}`, `--screenshot=${resolve(pngPath)}`, url])) return b.split(/[\\/]/).pop();
   }
   return null;
