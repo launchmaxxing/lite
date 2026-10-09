@@ -1,0 +1,13 @@
+{
+  "name": "lm-lite",
+  "version": "0.1.0",
+  "description": "The anti-slop launch checker. Lints any launch draft for AI tells, has a skeptical critic score it and fix the weak lines in your voice, and turns your repo's real star history into a shareable card. Nothing posts.",
+  "author": {
+    "name": "Yash Bavadiya",
+    "url": "https://github.com/xevrion"
+  },
+  "homepage": "https://launchmaxxing.co",
+  "repository": "https://github.com/launchmaxxing/lite",
+  "license": "MIT",
+  "keywords": ["launch", "anti-slop", "ai-writing", "show-hn", "x", "github-stars", "linter"]
+}

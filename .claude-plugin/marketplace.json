@@ -1,0 +1,15 @@
+{
+  "name": "launchmaxxing-lite",
+  "description": "The free anti-slop launch checker from Launchmaxxing.",
+  "owner": {
+    "name": "Yash Bavadiya",
+    "url": "https://launchmaxxing.co"
+  },
+  "plugins": [
+    {
+      "name": "lm-lite",
+      "source": "./",
+      "description": "Lint launch drafts for AI tells, get a skeptical critic's score and fixes, and make a star card from your repo's real history."
+    }
+  ]
+}
