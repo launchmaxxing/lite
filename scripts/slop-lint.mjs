@@ -195,7 +195,9 @@ for (const file of files) {
       return;
     }
     if (inFence) return;
-    const line = raw.replace(/`[^`]*`/g, (m) => " ".repeat(m.length)).replace(/\]\([^)]*\)/g, (m) => "]" + " ".repeat(m.length - 1));
+    // Link targets stop at "]" and allow one level of parentheses, so the match is linear even on
+    // a long line of unclosed "](" (the old [^)]* rescanned to the end of the line from each one).
+    const line = raw.replace(/`[^`]*`/g, (m) => " ".repeat(m.length)).replace(/\]\((?:[^()\]]|\([^()\]]*\))*\)/g, (m) => "]" + " ".repeat(m.length - 1));
 
     for (const { phrase, re } of phrases) {
       re.lastIndex = 0;
