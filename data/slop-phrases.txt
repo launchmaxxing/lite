@@ -1,0 +1,86 @@
+# One phrase per line, matched case-insensitively as a whole phrase.
+# Lines starting with # are comments. Dashes are checked by slop-lint.mjs itself.
+game-changer
+game changer
+game-changing
+unlock
+unlocks
+unlocking
+supercharge
+supercharged
+in today's fast-paced
+fast-paced world
+it's important to note
+it is important to note
+it's worth noting
+delve
+delves
+delving
+leverage
+leveraging
+seamless
+seamlessly
+elevate
+elevates
+revolutionize
+revolutionary
+revolutionizing
+effortless
+effortlessly
+cutting-edge
+next-level
+take it to the next level
+empower
+empowers
+empowering
+harness the power
+unleash
+unleashes
+dive into
+deep dive
+let's dive in
+buckle up
+look no further
+whether you're a
+in the world of
+in the realm of
+navigate the
+landscape
+tapestry
+testament to
+boasts
+robust
+streamline
+streamlined
+transformative
+paradigm shift
+synergy
+holistic
+best-in-class
+world-class
+state-of-the-art
+journey
+crafted with love
+excited to announce
+thrilled to announce
+i'm thrilled
+i'm excited to share
+humbled
+ever-evolving
+at the end of the day
+a must-have
+stay tuned
+without further ado
+here's the thing
+the best part?
+let that sink in
+read that again
+not just a
+more than just
+10x
+🚀
+🔥
+✨
+💯
+👇
+🧵
