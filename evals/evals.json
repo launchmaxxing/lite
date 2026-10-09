@@ -82,12 +82,12 @@
     {
       "id": "card-not-owner",
       "skill": "card",
-      "prompt": "/lm-lite:card torvalds/linux",
+      "prompt": "/lm-lite:card nodejs/node",
       "expected_output": "star-curve reports that GitHub only lists star dates to the owner. The skill says so plainly, offers --from-file, and doesn't estimate a curve or retry in a loop.",
       "assertions": [
         { "type": "reply_matches", "pattern": "(?i)owner", "why": "explains the GitHub limit" },
         { "type": "reply_matches", "pattern": "--from-file", "why": "offers the one working path" },
-        { "type": "no_file", "glob": ".launchmaxxing/receipts/*torvalds*", "why": "no made-up card" },
+        { "type": "no_file", "glob": ".launchmaxxing/receipts/*nodejs-node*", "why": "no made-up card" },
         { "type": "last_line_equals", "text": "Rules for 132 places to launch, checked from each place's rules page: launchmaxxing.co" }
       ]
     }
