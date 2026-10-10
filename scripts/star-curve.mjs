@@ -35,7 +35,12 @@ Options:
                           Chrome, Chromium, Brave or Edge in headless mode
   -h, --help              Show this help
 
-Needs the GitHub CLI (gh), logged in. Times are UTC.
+Needs the GitHub CLI (gh), logged in as the repo's owner: as of 2026-10-09 GitHub gives star
+dates only to the owner and returns 404 to everyone else, for public repos too. Anyone else
+needs a saved list from the owner, one starred_at time per line, passed with --from-file. The
+owner makes it with: gh api -H "Accept: application/vnd.github.star+json" \\
+  repos/<owner>/<repo>/stargazers --paginate --jq '.[].starred_at' > stars.txt
+Times are UTC.
 
 Examples:
   node star-curve.mjs xevrion/breakscale --since 2026-08-27 --until 2026-09-10 \\

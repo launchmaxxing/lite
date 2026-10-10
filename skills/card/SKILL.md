@@ -20,7 +20,7 @@ Draws the star card for a repo from its real stargazer dates: "8 [arrow] 1,051 s
 ## Before you start
 
 - Find the repo: `owner/repo` from `$ARGUMENTS` or the message, else run `git remote -v` and take the GitHub `origin`.
-- GitHub only gives the dates of stars to the repo's owner (true as of 2026-10-09). If the person doesn't own the repo, the script says so. Then the only way is a saved list of `starred_at` times, one per line, passed with `--from-file <path>`. Say this plainly instead of retrying.
+- GitHub only gives the dates of stars to the repo's owner (true as of 2026-10-09). If the person doesn't own the repo, the script says so. Then the only way is a saved list of `starred_at` times, one per line, passed with `--from-file <path>`. The owner makes it with the `gh api` command shown in `star-curve.mjs --help`. Say this plainly instead of retrying, and don't run that command yourself on a repo the person doesn't own: it returns the same 404.
 - If the person gives such a list, add `--from-file <path>` to both commands below. The `owner/repo` is then only the name on the card.
 - Ask at most one question, and only if the message doesn't answer it: "When did you launch, and where did you post? (dates are enough)". If there's no answer, or you can't ask, pick the window from the data in step 1.
 

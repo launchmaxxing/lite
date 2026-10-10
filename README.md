@@ -94,7 +94,7 @@ Two checks run, and they catch different things:
 /lm-lite:card your-name/your-repo
 ```
 
-Tell it when you posted and it adds markers. It writes a 1200x675 PNG and SVG to `.launchmaxxing/receipts/`. The card has a small "launchmaxxing.co" in the corner. To remove it, add `--no-mark`; nothing else changes. GitHub now only shows star dates to a repo's owner (other repos return 404 as of 2026-10-09). So run it on your own repo, or pass a saved list of star times with `--from-file`.
+Tell it when you posted and it adds markers. It writes a 1200x675 PNG and SVG to `.launchmaxxing/receipts/`. The card has a small "launchmaxxing.co" in the corner. To remove it, add `--no-mark`; nothing else changes. GitHub now only shows star dates to a repo's owner (other repos return 404 as of 2026-10-09). So run it on your own repo, or pass a saved list of star times with `--from-file`. `node scripts/star-curve.mjs --help` shows the one command the owner runs to save that list.
 
 **Without Claude.** Both are plain Node scripts with no dependencies, the same scripts the paid kit uses:
 
